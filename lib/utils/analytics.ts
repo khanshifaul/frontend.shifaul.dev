@@ -23,7 +23,7 @@ export async function trackEvent(event: string, metadata?: any) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 2000); // 2 seconds timeout
       
-      const geoResponse = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+      const geoResponse = await fetch('https://ipwho.is/', { signal: controller.signal });
       clearTimeout(timeoutId);
       
       if (geoResponse.ok) {
@@ -32,7 +32,7 @@ export async function trackEvent(event: string, metadata?: any) {
               ip: data.ip,
               city: data.city,
               region: data.region,
-              country: data.country_name,
+              country: data.country, // ipwho.is uses 'country' instead of 'country_name'
               loc: `${data.latitude},${data.longitude}`,
           };
       }

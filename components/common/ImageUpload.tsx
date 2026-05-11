@@ -67,6 +67,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                         src={value}
                         alt="Preview"
                         fill
+			sizes="(max-width: 768px) 100vw, 50vw"
                         className="object-cover transition-transform group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">

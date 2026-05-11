@@ -21,7 +21,7 @@ const EditDialog = ({ children }: Props) => {
           <MdEdit className="text-2xl" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="md:min-w-[50vw] min-w-screen overflow-scroll">
+      <SheetContent className="md:min-w-[50vw] lg:min-w-[80vw] min-w-screen overflow-scroll">
         <SheetHeader>
           <SheetTitle>Edit</SheetTitle>
         </SheetHeader>

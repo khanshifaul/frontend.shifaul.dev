@@ -12,7 +12,7 @@ const Projects = async () => {
         <div className="flex gap-2">
           <RefreshBtn />
           <Button size={"sm"}>
-            <Link href={"/admin/blog-posts/new"}>Add New Project</Link>
+            <Link href={"/admin/projects/new"}>Add New Project</Link>
           </Button>
         </div>
       </PageTitle>
