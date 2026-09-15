@@ -83,7 +83,7 @@ const ContactForm = () => {
       } else {
         setStatus("TRANSMISSION_FAILURE: Remote host rejected payload.");
       }
-    } catch (err) {
+    } catch {
       setStatus("CRITICAL_ERROR: Connection timed out or stream corrupted.");
     } finally {
       setIsSubmitting(false);

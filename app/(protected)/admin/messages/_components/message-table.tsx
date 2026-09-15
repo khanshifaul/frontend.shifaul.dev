@@ -17,7 +17,7 @@ import MessageSheet from "./message-sheet";
 
 const MessagesTable = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

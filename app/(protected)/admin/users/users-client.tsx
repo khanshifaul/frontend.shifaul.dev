@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AdminUser, getUsers, PaginatedUsers } from "@/lib/actions/adminUserApi";
+import { getUsers, PaginatedUsers } from "@/lib/actions/adminUserApi";
 import { UsersTable } from "./_components/users-table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

@@ -163,7 +163,7 @@ interface ResizablePanelProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const ResizablePanel = React.forwardRef<HTMLDivElement, ResizablePanelProps>(
     ({ className, defaultSize = 50, minSize = 10, maxSize = 90, children, style, ...props }, ref) => {
-        const { groupId, direction, registerPanel, getSize, getTotalSize } = useResizablePanelGroup()
+        const { groupId, direction: _direction, registerPanel, getSize, getTotalSize: _getTotalSize } = useResizablePanelGroup()
         const indexRef = React.useRef<number>(-1)
 
         // Register panel on first render only
@@ -172,7 +172,7 @@ const ResizablePanel = React.forwardRef<HTMLDivElement, ResizablePanelProps>(
         }
 
         const size = getSize(indexRef.current)
-        const totalSize = getTotalSize()
+        const _totalSize = _getTotalSize()
         // Convert to actual percentage of total
         // const actualPercent = totalSize > 0 ? (size / totalSize) * 100 : size
 
@@ -206,7 +206,7 @@ const ResizableHandle = React.forwardRef<HTMLDivElement, ResizableHandleProps>(
     ({ className, withHandle = false, ...props }, ref) => {
         const { direction, onResize } = useResizablePanelGroup()
         const [isDragging, setIsDragging] = React.useState(false)
-        const handleIndexRef = React.useRef<number>(-1)
+        const _handleIndexRef = React.useRef<number>(-1)
         const lastPosRef = React.useRef<number>(0)
         const handleRef = React.useRef<HTMLDivElement>(null)
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { getPublicBlogPosts, type BlogPost, type BlogPostQuery } from "@/lib/actions/blogApi";
+import { getPublicBlogPosts, type BlogPost } from "@/lib/actions/blogApi";
 import { type IBlogPost } from "@/types/globals";
 import { motion, AnimatePresence } from "motion/react";
 import FeaturedArticles from "./_components/featured-articles";

@@ -7,7 +7,7 @@ interface DevFooterProps {
 const DevFooter = ({ className }: DevFooterProps) => {
   return (
     <footer
-      className={`${className} w-full flex items-end justify-end p-2 mt-12 text-sm md:text-normal text-zinc-600 dark:text-zinc-500 transition-colors duration-500`}
+      className={`${className} w-full flex items-end justify-end p-2 text-sm md:text-normal text-zinc-600 dark:text-zinc-500 transition-colors duration-500`}
     >
       <p className="leading-tight md:leading-loose font-mono flex ">
         {new Date().getFullYear()} &copy;&nbsp;

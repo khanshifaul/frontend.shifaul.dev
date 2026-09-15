@@ -36,7 +36,7 @@ const Slider = React.forwardRef<HTMLDivElement, SliderProps>(
         max = 100,
         step = 1,
         disabled,
-        minStepsBetweenThumbs = 0,
+        minStepsBetweenThumbs: _minStepsBetweenThumbs = 0,
         ...props
     }, ref) => {
         const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue)

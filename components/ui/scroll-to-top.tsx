@@ -4,7 +4,6 @@ import * as React from "react"
 import { LuArrowUp } from "react-icons/lu"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { FaArrowUp } from "react-icons/fa"
 
 export function ScrollToTop() {
     const [isVisible, setIsVisible] = React.useState(false)

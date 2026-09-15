@@ -85,7 +85,7 @@ interface ContextMenuContentProps {
 }
 
 const ContextMenuContent = React.forwardRef<HTMLDivElement, ContextMenuContentProps>(
-    ({ children, className, ...props }, ref) => {
+    ({ children, className, ...props }, _ref) => {
         const { open, position } = useContextMenu()
         const contentRef = React.useRef<HTMLDivElement>(null)
         const [adjustedPosition, setAdjustedPosition] = React.useState(position)

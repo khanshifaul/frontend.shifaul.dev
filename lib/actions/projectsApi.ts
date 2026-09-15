@@ -262,7 +262,9 @@ class ProjectsAPI {
       
       return { data: result };
     } catch (error) {
-      console.warn("CRITICAL: CONNECTION TO API NODES LOST. INITIALIZING LOCAL DATA FALLBACK.", error);
+      if (process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERBOSE_API_FALLBACK === 'true') {
+        console.debug("API_NODES_OFFLINE: using local data fallback for projects", error);
+      }
       try {
         let result;
         if (typeof window === 'undefined') {
@@ -280,11 +282,11 @@ class ProjectsAPI {
         }
         return { data: result };
       } catch (fallbackError) {
-        console.error("TOTAL_SYSTEM_FAILURE: Local data nodes also unreachable.", fallbackError);
+        console.error("API_FALLBACK_FAILED: local data nodes also unreachable.", fallbackError);
         return {
           data: {
             success: false,
-            message: "SYSTEM_FAILURE: ALL DATA NODES UNREACHABLE",
+            message: "API and local data fallback both unavailable.",
             data: []
           }
         };

@@ -1,12 +1,10 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -17,7 +15,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +24,6 @@ import {
     enableTwoFactor,
     generateTwoFactorSecret,
     getTwoFactorStatus,
-    verifyTwoFactor,
 } from "@/lib/actions/authAPi";
 import { useAppDispatch } from "@/lib/store/hooks";
 import { QRCodeSVG } from "qrcode.react";
@@ -55,8 +51,8 @@ const TwoFactorAuth = () => {
         try {
             const { data } = await getTwoFactorStatus(dispatch);
             setIsEnabled(data.isEnabled);
-        } catch (error) {
-            console.error("Failed to fetch 2FA status:", error);
+        } catch (_error) {
+            console.error("Failed to fetch 2FA status:", _error);
         } finally {
             setLoading(false);
         }
@@ -68,7 +64,7 @@ const TwoFactorAuth = () => {
             const { data } = await generateTwoFactorSecret(dispatch);
             setSetupData(data);
             setShowSetupDialog(true);
-        } catch (error) {
+        } catch {
             toast.error("Failed to start 2FA setup");
         } finally {
             setLoading(false);
@@ -84,7 +80,7 @@ const TwoFactorAuth = () => {
             setSetupData(null);
             setVerificationCode("");
             toast.success("Two-factor authentication enabled");
-        } catch (error) {
+        } catch {
             toast.error("Invalid verification code");
         }
     };
@@ -105,7 +101,7 @@ const TwoFactorAuth = () => {
             await disableTwoFactor({ totpCode: code }, dispatch);
             setIsEnabled(false);
             toast.success("Two-factor authentication disabled");
-        } catch (error) {
+        } catch {
             toast.error("Failed to disable 2FA");
         } finally {
             setLoading(false);

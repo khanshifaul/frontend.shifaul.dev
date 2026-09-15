@@ -307,7 +307,9 @@ class BlogAPI {
       
       return { data: result };
     } catch (error) {
-      console.warn("CRITICAL: BLOG API NODES OFFLINE. INITIALIZING LOCAL VAULT FALLBACK.", error);
+      if (process.env.NODE_ENV !== 'production' || process.env.NEXT_PUBLIC_VERBOSE_API_FALLBACK === 'true') {
+        console.debug("BLOG_API_OFFLINE: using local data fallback for blog posts", error);
+      }
       try {
         let result;
         if (typeof window === 'undefined') {
@@ -325,11 +327,11 @@ class BlogAPI {
         }
         return { data: result };
       } catch (fallbackError) {
-        console.error("TOTAL_SYSTEM_FAILURE: Blog data vault also unreachable.", fallbackError);
+        console.error("BLOG_API_FALLBACK_FAILED: local data vault also unreachable.", fallbackError);
         return {
           data: {
             success: false,
-            message: "SYSTEM_FAILURE: ALL BLOG NODES UNREACHABLE",
+            message: "Blog API and local data fallback both unavailable.",
             data: []
           }
         };

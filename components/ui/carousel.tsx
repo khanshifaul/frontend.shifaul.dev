@@ -24,7 +24,7 @@ interface CarouselProps extends React.HTMLAttributes<HTMLDivElement> {
  * Carousel/Slider component with Infinite Looping
  */
 const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
-    ({ className, children, autoPlay = 0, loop = true, ...props }, ref) => {
+    ({ className, children, autoPlay = 0, loop: _loop = true, ...props }, ref) => {
         // Start at 1 because 0 is the clone of the last item
         const [currentIndex, setCurrentIndex] = React.useState(1)
         const [itemsCount, setItemsCount] = React.useState(0)

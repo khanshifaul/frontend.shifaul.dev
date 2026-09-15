@@ -11,7 +11,7 @@ import { useDispatch } from "react-redux";
 export default function EmailVerifyClient() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const params = useParams<{ token: string }>();
+  const _params = useParams<{ token: string }>();
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("Verifying your email...");

@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { initiateGitHubAuth, initiateGoogleAuth } from "@/lib/actions/authAPi";
-import { motion } from "motion/react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 

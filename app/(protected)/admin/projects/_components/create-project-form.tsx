@@ -9,7 +9,7 @@ const CreateProjectForm: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
 
   const onSubmit = async (formData: ProjectFormInput) => {
     // Clear previous states

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useAnimationFrame } from "motion/react";
+import { useAnimationFrame } from "motion/react";
 
 // ─── CRT Flicker Engine ────────────────────────────────────────────────────────
 const GLITCH_BARS = 5;

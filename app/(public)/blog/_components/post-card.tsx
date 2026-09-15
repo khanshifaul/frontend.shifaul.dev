@@ -3,7 +3,6 @@
 import { IBlogPost } from "@/types/globals";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "motion/react";
 
 interface PostCardProps {
   post: IBlogPost;

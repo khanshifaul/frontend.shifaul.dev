@@ -21,7 +21,7 @@ import DeleteDialog from "../../_components/delete-dialog";
 
 const SubscribersTable = () => {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user: _user } = useAuth();
     const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

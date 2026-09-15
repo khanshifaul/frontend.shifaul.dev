@@ -104,7 +104,6 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
         className,
         numberOfMonths = 1,
         size = "default",
-        ...props
     }, ref) => {
         const [open, setOpen] = React.useState(false)
 

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 const NewBlogPostForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [success, setSuccess] = useState(false);
   const router = useRouter();
 

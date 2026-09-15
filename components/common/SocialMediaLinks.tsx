@@ -14,7 +14,7 @@ import {
 const ContactItem = ({ label, value, href, copyValue, isEmail = false }: { label: string; value: string; href: string; copyValue: string; isEmail?: boolean }) => {
   const [isCopied, setIsCopied] = useState(false);
 
-  const handleAction = (e: React.MouseEvent) => {
+  const handleAction = (_e: React.MouseEvent) => {
     navigator.clipboard.writeText(copyValue);
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);

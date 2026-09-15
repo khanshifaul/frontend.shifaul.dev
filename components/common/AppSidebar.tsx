@@ -11,7 +11,6 @@ import {
   FiBell,
   FiSettings,
   FiLogOut,
-  FiCommand,
 } from "react-icons/fi"
 import { ThemeSwitcher } from "@/components/ui/theme-switcher"
 import {
@@ -25,9 +24,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
   useSidebar,
 } from "@/components/ui/sidebar"

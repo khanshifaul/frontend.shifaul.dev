@@ -14,7 +14,7 @@ interface CalendarContextValue {
     setHoveredDate: (date: Date | null) => void
 }
 
-const CalendarContext = React.createContext<CalendarContextValue | null>(null)
+const _CalendarContext = React.createContext<CalendarContextValue | null>(null)
 
 export interface CalendarProps {
     /** Selection mode */
@@ -283,7 +283,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                                     type="button"
                                     onClick={navigatePrev}
                                     className={cn(
-                                        "inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all",
+                                        "inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all cursor-pointer",
                                         s.navBtn
                                     )}
                                 >
@@ -308,7 +308,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                                     type="button"
                                     onClick={navigateNext}
                                     className={cn(
-                                        "inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all",
+                                        "inline-flex items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all cursor-pointer",
                                         s.navBtn
                                     )}
                                 >
@@ -488,10 +488,10 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                                     </div>
                                     {/* Navigation for views */}
                                     <div className="absolute inset-0 flex justify-between items-center">
-                                        <button onClick={navigatePrev} className={cn("p-1 rounded-md border hover:bg-accent", s.navBtn, "flex items-center justify-center")}>
+                                        <button onClick={navigatePrev} className={cn("p-1 rounded-md border hover:bg-accent cursor-pointer", s.navBtn, "flex items-center justify-center")}>
                                             <svg className={s.icon} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
                                         </button>
-                                        <button onClick={navigateNext} className={cn("p-1 rounded-md border hover:bg-accent", s.navBtn, "flex items-center justify-center")}>
+                                        <button onClick={navigateNext} className={cn("p-1 rounded-md border hover:bg-accent cursor-pointer", s.navBtn, "flex items-center justify-center")}>
                                             <svg className={s.icon} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                         </button>
                                     </div>

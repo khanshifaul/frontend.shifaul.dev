@@ -22,7 +22,6 @@ interface UserActionsProps {
 
 export function UserActions({ user, onUserUpdated }: UserActionsProps) {
     const [loading, setLoading] = useState(false);
-    const [showEditDialog, setShowEditDialog] = useState(false);
 
     const handleCopyId = () => {
         navigator.clipboard.writeText(user.id);

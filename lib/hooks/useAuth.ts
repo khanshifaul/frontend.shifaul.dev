@@ -20,84 +20,48 @@ export const useAuth = () => {
   };
 
   const register = async (data: RegisterRequest) => {
-    try {
-      const result = await authAPI.register(data, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.register(data, dispatch);
+    return result;
   };
 
   const login = async (credentials: LoginRequest) => {
-    try {
-      const result = await authAPI.login(credentials, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.login(credentials, dispatch);
+    return result;
   };
 
   const loginWithTwoFactor = async (data: TwoFactorLoginRequest) => {
-    try {
-      const result = await authAPI.loginWithTwoFactor(data, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.loginWithTwoFactor(data, dispatch);
+    return result;
   };
 
   const loginWithBackupCode = async (data: BackupCodeLoginRequest) => {
-    try {
-      const result = await authAPI.loginWithBackupCode(data, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.loginWithBackupCode(data, dispatch);
+    return result;
   };
 
   const verifyEmail = async (token: string) => {
-    try {
-      const result = await authAPI.verifyEmail(token, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.verifyEmail(token, dispatch);
+    return result;
   };
 
   const changePassword = async (passwordData: { currentPassword: string; newPassword: string }) => {
-    try {
-      const result = await authAPI.changePassword(passwordData, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.changePassword(passwordData, dispatch);
+    return result;
   };
 
   const forgotPassword = async (email: string) => {
-    try {
-      const result = await authAPI.forgotPassword({ email }, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.forgotPassword({ email }, dispatch);
+    return result;
   };
 
   const resetPassword = async (token: string, password: string) => {
-    try {
-      const result = await authAPI.resetPassword({ token, password }, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.resetPassword({ token, password }, dispatch);
+    return result;
   };
 
   const resendVerificationEmail = async (email: string) => {
-    try {
-      const result = await authAPI.resendVerificationEmail(email, dispatch);
-      return result;
-    } catch (error) {
-      throw error;
-    }
+    const result = await authAPI.resendVerificationEmail(email, dispatch);
+    return result;
   };
 
   return {

@@ -93,7 +93,7 @@ MenubarMenu.displayName = "MenubarMenu"
 
 // MenubarTrigger
 const MenubarTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-    ({ className, children, ...props }, ref) => {
+    ({ className, children, ...props }, _ref) => {
         const { activeMenu, setActiveMenu } = useMenubar()
         const { menuId, triggerRef } = useMenubarMenu()
         const isOpen = activeMenu === menuId
@@ -130,7 +130,7 @@ MenubarTrigger.displayName = "MenubarTrigger"
 
 // MenubarContent
 const MenubarContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-    ({ className, children, ...props }, ref) => {
+    ({ className, children, ...props }, _ref) => {
         const { activeMenu, setActiveMenu } = useMenubar()
         const { menuId, triggerRef } = useMenubarMenu()
         const isOpen = activeMenu === menuId

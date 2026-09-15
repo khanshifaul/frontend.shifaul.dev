@@ -78,19 +78,19 @@ export default function HiddenDoor() {
       {showGesture && (
         <div>
           <button
-            className="fixed -top-1 -left-1 w-4 h-4 z-100 border border-red-400"
+            className="fixed -top-1 -left-1 w-4 h-4 z-100 border border-red-400 cursor-pointer"
             onClick={() => handleClick("top-left")}
           />
           <button
-            className="fixed -top-1 -right-1 w-4 h-4 z-100 border border-blue-400"
+            className="fixed -top-1 -right-1 w-4 h-4 z-100 border border-blue-400 cursor-pointer"
             onClick={() => handleClick("top-right")}
           />
           <button
-            className="fixed -bottom-1 -right-1 w-4 h-4 z-100 border border-green-400"
+            className="fixed -bottom-1 -right-1 w-4 h-4 z-100 border border-green-400 cursor-pointer"
             onClick={() => handleClick("bottom-right")}
           />
           <button
-            className="fixed -bottom-1 -left-1 w-4 h-4 z-100 border border-yellow-400"
+            className="fixed -bottom-1 -left-1 w-4 h-4 z-100 border border-yellow-400 cursor-pointer"
             onClick={() => handleClick("bottom-left")}
           />
         </div>

@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { trackEvent } from '@/lib/utils/analytics';
+import { trackEvent, trackVisit } from '@/lib/utils/analytics';
 
 export default function AnalyticsTracker() {
   const pathname = usePathname();
@@ -13,6 +13,8 @@ export default function AnalyticsTracker() {
       path: pathname,
       search: searchParams.toString(),
     });
+    // Visitor notification (deduped server-side by IP+UA)
+    trackVisit();
   }, [pathname, searchParams]);
 
   return null;

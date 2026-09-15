@@ -4,11 +4,10 @@ import { Button } from "@/components/ui/button";
 import { FormField } from "@/components/ui/form-field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { ImageUpload } from "@/components/common/ImageUpload";
 import { ForwardRefEditor } from "./ForwardRefEditor";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { z } from "zod";
 
 export const blogPostSchema = z.object({

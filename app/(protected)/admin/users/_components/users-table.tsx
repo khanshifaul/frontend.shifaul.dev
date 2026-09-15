@@ -12,7 +12,7 @@ import { AdminUser } from "@/lib/actions/adminUserApi";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { UserActions } from "./user-actions";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface UsersTableProps {
     users: AdminUser[];

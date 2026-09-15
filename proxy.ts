@@ -56,7 +56,7 @@ const hasAdminRole = (userData: any): boolean => {
 
 // Main proxy function for Next.js 16
 export async function proxy(request: NextRequest) {
-    const { pathname, search } = request.nextUrl
+    const { pathname, search: _search } = request.nextUrl
 
     // Allow OAuth callbacks and static assets
     if (pathname.startsWith('/api/auth/callback') ||
@@ -140,7 +140,7 @@ export const authHelpers = {
     },
 
     // Check if user has required role
-    hasRole: (requiredRole: string): boolean => {
+    hasRole: (_requiredRole: string): boolean => {
         if (typeof window === 'undefined') return false
 
         const authData = authHelpers.checkAuth()

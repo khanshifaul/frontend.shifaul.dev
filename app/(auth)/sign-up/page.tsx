@@ -90,7 +90,7 @@ export default function SignUp() {
 
     try {
       setLoading(true);
-      const result = await register(
+      await register(
         {
           name: values.name,
           email: values.email,

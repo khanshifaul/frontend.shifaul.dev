@@ -61,97 +61,93 @@ export const apiClient = {
             headers.Authorization = `Bearer ${accessToken}`;
         }
 
-        try {
-            const response = await fetch(`${API_BASE_URL}${url}`, {
-                ...options,
-                headers,
-            });
+        const response = await fetch(`${API_BASE_URL}${url}`, {
+            ...options,
+            headers,
+        });
 
-            // If 401 Unauthorized, handle token refresh
-            if (response.status === 401) {
-                // Determine if we have a refresh token available
-                const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
+        // If 401 Unauthorized, handle token refresh
+        if (response.status === 401) {
+            // Determine if we have a refresh token available
+            const refreshToken = localStorage.getItem('refreshToken') || sessionStorage.getItem('refreshToken');
 
-                if (!refreshToken) {
-                    // No refresh token, logout immediately if dispatch is available
-                    if (dispatch) dispatch(logout());
-                    return response;
-                }
-
-                if (!isRefreshing) {
-                    isRefreshing = true;
-
-                    try {
-                        const rememberMe = !!localStorage.getItem('refreshToken');
-                        const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh?rememberMe=${rememberMe}`, {
-                            method: 'GET',
-                            headers: {
-                                'Authorization': `Bearer ${refreshToken}`,
-                                'Content-Type': 'application/json'
-                            },
-                        });
-
-                        if (refreshResponse.ok) {
-                            const result: ApiResponse<LoginResponseData> = await refreshResponse.json();
-
-                            if (result.success && result.data) {
-                                const { accessToken: newAccessToken, refreshToken: newRefreshToken } = result.data;
-
-                                // Update stored tokens
-                                if (rememberMe) {
-                                    localStorage.setItem('accessToken', newAccessToken);
-                                    localStorage.setItem('refreshToken', newRefreshToken);
-                                } else {
-                                    sessionStorage.setItem('accessToken', newAccessToken);
-                                    sessionStorage.setItem('refreshToken', newRefreshToken);
-                                }
-
-                                // Update Redux state
-                                if (dispatch) dispatch(setUser(result.data));
-
-                                // Notify subscribers
-                                onRefreshed(newAccessToken);
-                                isRefreshing = false;
-
-                                // Retry original request
-                                const retryHeaders = { ...headers, Authorization: `Bearer ${newAccessToken}` };
-                                return fetch(`${API_BASE_URL}${url}`, {
-                                    ...options,
-                                    headers: retryHeaders,
-                                });
-                            }
-                        }
-
-                        // Refresh failed or invalid response
-                        throw new Error('Refresh failed');
-
-                    } catch (error) {
-                        isRefreshing = false;
-                        refreshSubscribers = []; // Clear queue
-                        if (dispatch) dispatch(logout()); // Logout user
-                        console.error('Token refresh failed:', error);
-                        return response; // Return original 401
-                    }
-                } else {
-                    // Refresh already in progress, queue this request
-                    return new Promise((resolve) => {
-                        subscribeToRefresh((token: string) => {
-                            const retryHeaders = { ...headers, Authorization: `Bearer ${token}` };
-                            resolve(
-                                fetch(`${API_BASE_URL}${url}`, {
-                                    ...options,
-                                    headers: retryHeaders,
-                                })
-                            );
-                        });
-                    });
-                }
+            if (!refreshToken) {
+                // No refresh token, logout immediately if dispatch is available
+                if (dispatch) dispatch(logout());
+                return response;
             }
 
-            return response;
-        } catch (error) {
-            throw error;
+            if (!isRefreshing) {
+                isRefreshing = true;
+
+                try {
+                    const rememberMe = !!localStorage.getItem('refreshToken');
+                    const refreshResponse = await fetch(`${API_BASE_URL}/auth/refresh?rememberMe=${rememberMe}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${refreshToken}`,
+                            'Content-Type': 'application/json'
+                        },
+                    });
+
+                    if (refreshResponse.ok) {
+                        const result: ApiResponse<LoginResponseData> = await refreshResponse.json();
+
+                        if (result.success && result.data) {
+                            const { accessToken: newAccessToken, refreshToken: newRefreshToken } = result.data;
+
+                            // Update stored tokens
+                            if (rememberMe) {
+                                localStorage.setItem('accessToken', newAccessToken);
+                                localStorage.setItem('refreshToken', newRefreshToken);
+                            } else {
+                                sessionStorage.setItem('accessToken', newAccessToken);
+                                sessionStorage.setItem('refreshToken', newRefreshToken);
+                            }
+
+                            // Update Redux state
+                            if (dispatch) dispatch(setUser(result.data));
+
+                            // Notify subscribers
+                            onRefreshed(newAccessToken);
+                            isRefreshing = false;
+
+                            // Retry original request
+                            const retryHeaders = { ...headers, Authorization: `Bearer ${newAccessToken}` };
+                            return fetch(`${API_BASE_URL}${url}`, {
+                                ...options,
+                                headers: retryHeaders,
+                            });
+                        }
+                    }
+
+                    // Refresh failed or invalid response
+                    throw new Error('Refresh failed');
+
+                } catch (error) {
+                    isRefreshing = false;
+                    refreshSubscribers = []; // Clear queue
+                    if (dispatch) dispatch(logout()); // Logout user
+                    console.error('Token refresh failed:', error);
+                    return response; // Return original 401
+                }
+            } else {
+                // Refresh already in progress, queue this request
+                return new Promise((resolve) => {
+                    subscribeToRefresh((token: string) => {
+                        const retryHeaders = { ...headers, Authorization: `Bearer ${token}` };
+                        resolve(
+                            fetch(`${API_BASE_URL}${url}`, {
+                                ...options,
+                                headers: retryHeaders,
+                            })
+                        );
+                    });
+                });
+            }
         }
+
+        return response;
     },
 
     /**
@@ -161,7 +157,7 @@ export const apiClient = {
         if (!response.ok) {
             return response.json().then(errorData => {
                 throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-            }).catch(err => {
+            }).catch(() => {
                 // Fallback if json parsing fails
                 throw new Error(`HTTP error! status: ${response.status}`);
             });

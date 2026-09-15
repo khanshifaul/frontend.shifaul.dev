@@ -55,7 +55,7 @@ function OSMMap({ lat, lng, zoom = 13, className }: MapProps) {
     )
 }
 
-function GoogleMapEmbed({ lat, lng, zoom = 13, className, googleApiKey }: MapProps) {
+function GoogleMapEmbed({ lat, lng, zoom = 13, className, googleApiKey: _googleApiKey }: MapProps) {
     // Falls back to simple no-key embed if no key provided (limited functionality)
     // Or uses a proper specific place search if a key is provided.
     // For agency demo without a key, generic iframe might be safer or just a placeholder message.

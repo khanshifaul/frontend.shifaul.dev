@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { FaComments, FaTimes, FaPaperPlane } from "react-icons/fa"
+import { FaTimes, FaPaperPlane } from "react-icons/fa"
 import { cn } from "@/lib/utils"
 
 import { ScrollArea } from "@/components/ui/scroll-area"

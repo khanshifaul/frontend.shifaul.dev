@@ -419,7 +419,7 @@ DropdownMenuRadioGroup.displayName = "DropdownMenuRadioGroup"
 const DropdownMenuRadioItem = React.forwardRef<
     HTMLDivElement,
     React.HTMLAttributes<HTMLDivElement> & { value: string; disabled?: boolean }
->(({ className, children, value, disabled, onClick, ...props }, ref) => {
+>(({ className, children, disabled, onClick, ...props }, ref) => {
     const context = React.useContext(DropdownMenuContext)
 
     return (

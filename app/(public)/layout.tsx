@@ -1,6 +1,6 @@
 // PublicLayout.tsx
 import DevFooter from "@/components/common/DevFooter";
-import FloatingWidget from "@/components/common/FloatingWidget";
+import { FloatingDock } from "@/components/common/FloatingDock";
 import NavBar from "@/components/common/NavBar";
 import HireBanner from "@/components/common/HireBanner";
 import type { Metadata } from "next";
@@ -51,8 +51,8 @@ export default function PublicLayout({
         {children}
       </main>
       <DevFooter className="sticky bottom-0 z-50" />
-      {/* Floating Widget */}
-      <FloatingWidget />
+      {/* Floating dock — combines social share + AI chat trigger */}
+      <FloatingDock />
     </div>
   );
 }

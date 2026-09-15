@@ -23,7 +23,7 @@ const forgetPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
 });
 
-type ForgotPasswordValues = z.infer<typeof forgetPasswordSchema>;
+type _ForgotPasswordValues = z.infer<typeof forgetPasswordSchema>;
 
 export default function ForgotPasswordPage() {
   const dispatch = useDispatch();

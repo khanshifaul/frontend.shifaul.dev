@@ -151,7 +151,7 @@ class AuthAPI {
   }
 
   // Authentication endpoints
-  async register(data: RegisterRequest, dispatch: any): Promise<{ data: AuthResponse }> {
+  async register(data: RegisterRequest, _dispatch: any): Promise<{ data: AuthResponse }> {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -168,7 +168,7 @@ class AuthAPI {
     throw new Error(result.message || 'Registration failed');
   }
 
-  async verifyEmail(token: string, dispatch: any): Promise<{ data: any }> {
+  async verifyEmail(token: string, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/verify-email?token=${token}`, {
       method: 'GET',
     });
@@ -323,7 +323,7 @@ class AuthAPI {
     throw new Error(result.message || 'Token refresh failed');
   }
 
-  async forgotPassword(email: ForgotPasswordRequest, dispatch: any): Promise<{ data: any }> {
+  async forgotPassword(email: ForgotPasswordRequest, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -334,7 +334,7 @@ class AuthAPI {
     return { data: result.data };
   }
 
-  async resetPassword(data: ResetPasswordRequest, dispatch: any): Promise<{ data: any }> {
+  async resetPassword(data: ResetPasswordRequest, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -345,7 +345,7 @@ class AuthAPI {
     return { data: result.data };
   }
 
-  async verifyNewUser(token: string, dispatch: any): Promise<{ data: any }> {
+  async verifyNewUser(token: string, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/verify-email?token=${token}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -355,7 +355,7 @@ class AuthAPI {
     return { data: result.data };
   }
 
-  async resendVerificationEmail(email: string, dispatch: any): Promise<{ data: any }> {
+  async resendVerificationEmail(email: string, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/resend-verification-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -366,7 +366,7 @@ class AuthAPI {
     return { data: result.data };
   }
 
-  async verifyForgotPasswordOtp(data: any, dispatch: any): Promise<{ data: any }> {
+  async verifyForgotPasswordOtp(data: any, _dispatch: any): Promise<{ data: any }> {
     const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -590,7 +590,7 @@ class AuthAPI {
     let userData;
     try {
       userData = JSON.parse(decodeURIComponent(user));
-    } catch (error) {
+    } catch {
       throw new Error('Invalid user data in OAuth callback');
     }
 

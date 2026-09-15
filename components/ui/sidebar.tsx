@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { LuPanelLeft } from "react-icons/lu";
-import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -445,9 +444,9 @@ const SidebarMenuButton = React.forwardRef<
         {
             asChild = false,
             isActive = false,
-            variant = "default",
+            variant: _variant = "default",
             size = "default",
-            tooltip,
+            tooltip: _tooltip,
             className,
             ...props
         },

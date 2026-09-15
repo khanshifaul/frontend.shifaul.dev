@@ -6,12 +6,7 @@ import { Backgrounds } from "@/components/common/Backgrounds";
 import { Globe } from "@/components/common/Globe";
 
 import {
-  FaBriefcase,
-  FaCode,
   FaFilePdf,
-  FaGraduationCap,
-  FaLanguage,
-  FaRocket,
   FaTerminal,
   FaHandPointer,
   FaAnglesDown
@@ -573,7 +568,7 @@ export default function AboutPage() {
               <div className="flex-1 min-w-0 flex flex-col justify-center">
                 <div className="w-full">
                   <SectionHeader command="grep" filename="--all-capabilities" />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6 pl-8">
+                  <div className="grid grid-cols-1 gap-x-16 gap-y-6 pl-8">
                     <SkillGroup
                       title="Core Protocols"
                       skills={["Python", "JavaScript (ES6+)", "TypeScript", "PHP", "C++ / MicroPython", "Rust"]}

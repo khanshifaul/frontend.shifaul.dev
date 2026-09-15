@@ -82,3 +82,27 @@ export async function trackEvent(event: string, metadata?: any) {
     console.warn('Failed to send analytics event:', error);
   }
 }
+
+/**
+ * Visitor notification — fires once per page view. The backend dedupes by
+ * IP + user-agent and sends a Telegram message to Shifaul for new visitors.
+ */
+export async function trackVisit(metadata?: {
+  isReturning?: boolean;
+}) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    await fetch(`${API_BASE_URL}/analytics/visit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        path: window.location.pathname,
+        referrer: document.referrer || undefined,
+        isReturning: metadata?.isReturning,
+      }),
+    });
+  } catch {
+    // Silent — visitor notification is best-effort
+  }
+}

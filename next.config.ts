@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
+  // Pin the project root so Next.js stops walking up the filesystem
+  // looking for sibling lockfiles (we have one at /run/media/khan/Studio/Projects/package-lock.json
+  // from a different project that confused Turbopack).
+  outputFileTracingRoot: path.join(__dirname),
+  turbopack: {
+    root: path.join(__dirname),
+  },
   transpilePackages: ['@mdxeditor/editor'],
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   images: {

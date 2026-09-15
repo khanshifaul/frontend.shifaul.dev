@@ -37,7 +37,7 @@ export default function SignIn() {
   const router = useRouter();
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
 
   const [values, setValues] = useState<SignInValues>({
     email: "",
