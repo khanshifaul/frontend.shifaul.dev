@@ -1,346 +1,373 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
-import { useAnimationFrame } from "motion/react";
+import { useEffect, useRef } from "react";
 
-// ─── Config ───────────────────────────────────────────────────────────────────
+import { cn } from "@/lib/utils";
 
-const R = 88;               // sphere radius (SVG units)
-const CX = 100;              // center x
-const CY = 100;              // center y
-const TILT = 23.5 * (Math.PI / 180);
-const SPIN_SPEED = 0.15;     // rad/s — continuous rotation
-const WOBBLE_SPEED = 0.04;   // rad/s — slow pole-wander
-const LONG_COUNT = 10;       // longitude lines (reduced from 12)
-const LAT_COUNT = 6;         // latitude rings (reduced from 7)
-const DOT_ROWS = 7;          // graticule dot rows (reduced from 9)
-const DOT_COLS = 12;         // graticule dot columns (reduced from 18)
-const SEGMENTS = 36;         // path segments per curve (reduced from 64)
-const TARGET_FPS = 20;       // throttle render rate
-const FRAME_MS = 1000 / TARGET_FPS;
-const COLOR = "#10b981";
+// Land mask derived from Natural Earth (public domain): 240×120 cells, run-length encoded.
+const LAND =
 
-// ─── Pre-computed angle arrays (never change) ─────────────────────────────────
+"_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0HDBH_0_0_0211r_0_0wI1ZI118D3R6_0Z143121D2ZK8m7_0Q42284184ZM322S1M412_0M128231B7Xp7EHF611w522ABFPn4EL21G141uE271ADMo3833Y76L1D4J31A252DANU4E46$D1BG3A2B162D8LSBH32_0416127h1814387ISH222G1_0D4u585EB1J_0m152v3A79A7G8181_0W615n14212688C5F_0pAo513413A6V92_0h9mB6D5V92_0R29H6116WA622j93_0P33P4BU9Bb375311_0FA5N3GV7Ba3663_0FC5L2KX2FW21352112_0HC5h11X1GU3142_0U83mmU2241_0V82mk12X_0byf44W_0aze44X_0W12zhdL13182v_02c12fA1931272v33yaf85318852u34yaf841141K2q61_Yh65232131G2j1572_Wi683322F3h4371_01Wi52621422_012343_02VkBF11u4226_04RkDGw55_08PkH337w52_0BOl_0P_0J11G32ld1n_0I21A92ig1l_0K218A2hX1A211g_0M217tY1A12231Z11_0M12693gZ2E5X21_0P66143ea1E6E1Fy1W7336212aa1D9A4921_0X7146123Za2BA95912_0Z9mb29C68982_0U9jc17E5911871_0Y7hjG5B872_0a4ifK4B87111_0a354Ze23G4B2158111_0a2211BUiH3B231B1_0cHUhH112A2E4_0eEUfK2B2E2_0fHS73UU22274_0jIeQW21264_0jKdPY545_0jKdOa3371321_0bNbMc4351352_0YQYMd425136213_0TTWKf3521321111941_0LVVIh2A19713_0LVVIi5H741_0KUVJk411113177_0PTWJq122E2_0PSXIz1_0bQXJ51s432_0UPYJ52o11533_0UOYJ34n923E1_0HMXJ34mHK1_0BLYG54mH_0WKZG54jL_0VKaF53iOA1_0JJbF53iP_0TGeE63hR_0RGgCsQ_0RGgCsQ_0RFiAtR_0QFiAuP_0REk8v92E_0RDl6x67B_0RB_0r1CAE1_0CB_0_057G1_0BB_0_065H3_098_0_0V2_098_0_0C3F4_098_0_0D2F2_0B7_0_0T3_0C5_0_0U3_0D6_0_0_0i7_0R1_0_0H5_0_0_0k452_0_0_0f4_0_0_0m4_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0_0w2_0_0_0k2_0_0_0l3_0C6G82W_0Z2_08I6n_0S6l131135S2w_0K9Yr2_03v45398U_0zYI5SU_0yUtQ_0_01OvR_0_05M31sH55_0_09Up44477_0_03T_014_0_0JT_0_0_0Q7E141_0_0_0_0_0_0_0_0_0_0_0_0_0_0w";const RLE =
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$_";
 
-const LAT_ANGLES = Array.from({ length: LAT_COUNT }, (_, i) =>
-  (-70 + (i / (LAT_COUNT - 1)) * 140) * (Math.PI / 180)
-);
-
-const LON_ANGLES = Array.from({ length: LONG_COUNT }, (_, i) =>
-  (i / LONG_COUNT) * Math.PI
-);
-
-// Pre-compute sphere points for latitude rings (indexed by [latIdx][segIdx])
-const LAT_SPHERE_PTS: [number, number, number][][] = LAT_ANGLES.map((lat) => {
-  const pts: [number, number, number][] = [];
-  for (let i = 0; i <= SEGMENTS; i++) {
-    const lon = (i / SEGMENTS) * 2 * Math.PI;
-    pts.push([
-      Math.cos(lat) * Math.sin(lon),
-      Math.sin(lat),
-      Math.cos(lat) * Math.cos(lon),
-    ]);
-  }
-  return pts;
-});
-
-// Pre-compute sphere points for longitude lines (indexed by [lonIdx][segIdx])
-// Each entry covers both the line and its antipodal (+π)
-const LON_SPHERE_PTS: { main: [number, number, number][]; anti: [number, number, number][] }[] =
-  LON_ANGLES.map((lon) => {
-    const main: [number, number, number][] = [];
-    const anti: [number, number, number][] = [];
-    for (let i = 0; i <= SEGMENTS; i++) {
-      const lat = -Math.PI / 2 + (i / SEGMENTS) * Math.PI;
-      main.push([
-        Math.cos(lat) * Math.sin(lon),
-        Math.sin(lat),
-        Math.cos(lat) * Math.cos(lon),
-      ]);
-      anti.push([
-        Math.cos(lat) * Math.sin(lon + Math.PI),
-        Math.sin(lat),
-        Math.cos(lat) * Math.cos(lon + Math.PI),
-      ]);
-    }
-    return { main, anti };
-  });
-
-// Pre-compute sphere points for graticule dots
-const DOT_SPHERE_PTS: [number, number, number][] = [];
-for (let ri = 0; ri < DOT_ROWS; ri++) {
-  const lat = (-70 + (ri / (DOT_ROWS - 1)) * 140) * (Math.PI / 180);
-  for (let ci = 0; ci < DOT_COLS; ci++) {
-    const lon = (ci / DOT_COLS) * 2 * Math.PI;
-    DOT_SPHERE_PTS.push([
-      Math.cos(lat) * Math.sin(lon),
-      Math.sin(lat),
-      Math.cos(lat) * Math.cos(lon),
-    ]);
-  }
-}
-
-// ─── Optimised projection (inline trig, no array allocation) ──────────────────
-
-// Cached sin/cos for the rotation — updated once per frame
-let _cY = 1, _sY = 0, _cX = 1, _sX = 0, _cZ = 1, _sZ = 0;
-
-function updateRotationCache(spin: number, tiltX: number, tiltZ: number) {
-  _cY = Math.cos(spin); _sY = Math.sin(spin);
-  _cX = Math.cos(TILT + tiltX); _sX = Math.sin(TILT + tiltX);
-  _cZ = Math.cos(tiltZ); _sZ = Math.sin(tiltZ);
-}
-
-/** Fast project using cached rotation — returns [x, y, z] */
-function projectFast(p: [number, number, number]): [number, number, number] {
-  // rotY
-  const a0 = p[0] * _cY - p[2] * _sY;
-  const a1 = p[1];
-  const a2 = p[0] * _sY + p[2] * _cY;
-  // rotX
-  const b0 = a0;
-  const b1 = a1 * _cX - a2 * _sX;
-  const b2 = a1 * _sX + a2 * _cX;
-  // rotZ
-  const c0 = b0 * _cZ - b1 * _sZ;
-  const c1 = b0 * _sZ + b1 * _cZ;
-
-  return [CX + c0 * R, CY - c1 * R, b2];
-}
-
-// ─── Path builders (reuse pre-computed sphere points) ─────────────────────────
-
-function buildLatPath(latIdx: number): string {
-  const pts = LAT_SPHERE_PTS[latIdx];
-  const parts: string[] = [];
-  for (let i = 0; i <= SEGMENTS; i++) {
-    const [x, y] = projectFast(pts[i]);
-    parts.push(`${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`);
-  }
-  return parts.join(" ") + " Z";
-}
-
-function buildLonPaths(lonIdx: number): {
-  mainFront: string; mainBack: string;
-  antiFront: string; antiBack: string;
-} {
-  const { main, anti } = LON_SPHERE_PTS[lonIdx];
-
-  const mf: string[] = [], mb: string[] = [];
-  const af: string[] = [], ab: string[] = [];
-
-  for (let i = 0; i <= SEGMENTS; i++) {
-    const [mx, my, mz] = projectFast(main[i]);
-    const coord = `${mx.toFixed(1)},${my.toFixed(1)}`;
-    if (mz >= 0) {
-      mf.push(`${mf.length === 0 ? "M" : "L"}${coord}`);
-    } else {
-      mb.push(`${mb.length === 0 ? "M" : "L"}${coord}`);
-    }
-
-    const [ax, ay, az] = projectFast(anti[i]);
-    const acoord = `${ax.toFixed(1)},${ay.toFixed(1)}`;
-    if (az >= 0) {
-      af.push(`${af.length === 0 ? "M" : "L"}${acoord}`);
-    } else {
-      ab.push(`${ab.length === 0 ? "M" : "L"}${acoord}`);
+let mask: Uint8Array | undefined;
+const isLand = (lat: number, lng: number) => {
+  if (!mask) {
+    mask = new Uint8Array(28800);
+    let p = 0;
+    let v = 0;
+    for (const c of LAND) {
+      mask.fill(v, p, (p += RLE.indexOf(c)));
+      v ^= 1;
     }
   }
-
-  return {
-    mainFront: mf.join(" "),
-    mainBack: mb.join(" "),
-    antiFront: af.join(" "),
-    antiBack: ab.join(" "),
-  };
-}
-
-// ─── Frame data type ──────────────────────────────────────────────────────────
-
-type FrameData = {
-  latPaths: string[];
-  lonPaths: { mainFront: string; mainBack: string; antiFront: string; antiBack: string }[];
-  dots: { x: number; y: number; z: number }[];
-  northPole: [number, number, number];
-  southPole: [number, number, number];
+  return mask[((90 - lat) / 1.5 | 0) * 240 + ((lng + 180) / 1.5 | 0)];
 };
 
-function computeFrame(spin: number, tiltX: number, tiltZ: number): FrameData {
-  updateRotationCache(spin, tiltX, tiltZ);
+const RAD = Math.PI / 180;
+const vec = (lat: number, lng: number) => {
+  const c = Math.cos(lat * RAD);
+  return [c * Math.sin(lng * RAD), Math.sin(lat * RAD), c * Math.cos(lng * RAD)];
+};
 
-  const latPaths = LAT_ANGLES.map((_, i) => buildLatPath(i));
-  const lonPaths = LON_ANGLES.map((_, i) => buildLonPaths(i));
-
-  const dots: { x: number; y: number; z: number }[] = [];
-  for (let i = 0; i < DOT_SPHERE_PTS.length; i++) {
-    const [x, y, z] = projectFast(DOT_SPHERE_PTS[i]);
-    if (z >= 0) dots.push({ x, y, z }); // cull back-face during computation
-  }
-
-  const northPole = projectFast([0, 1, 0]);
-  const southPole = projectFast([0, -1, 0]);
-
-  return { latPaths, lonPaths, dots, northPole, southPole };
+export interface GlobeMarker {
+  /** Latitude in degrees */
+  lat: number;
+  /** Longitude in degrees */
+  lng: number;
+  /** Name drawn beside the marker and included in the accessible name */
+  label?: string;
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
+export interface GlobeArc {
+  /** Start as [lat, lng] */
+  from: [number, number];
+  /** End as [lat, lng] */
+  to: [number, number];
+}
 
-export const Globe: React.FC = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const spinRef = useRef(0);
-  const lastT = useRef<number | null>(null);
-  const lastRender = useRef(0);      // timestamp of last frame commit
+interface GlobeProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Highlighted points, as { lat, lng, label? } */
+  markers?: GlobeMarker[];
+  /** Great-circle connections, as { from: [lat, lng], to: [lat, lng] } */
+  arcs?: GlobeArc[];
+  /** [lat, lng] facing the viewer on first paint */
+  center?: [number, number];
+  /** Auto-rotation in degrees per second (negative spins west); 0 turns it off */
+  speed?: number;
+  /** Points sampled over the sphere; roughly 3 in 10 land and become dots */
+  samples?: number;
+  /** Land dot color: any CSS color, var() tokens included */
+  dotColor?: string;
+  /** Marker and arc color: any CSS color, var() tokens included */
+  accentColor?: string;
+  /** Accessible name; generated from marker labels when omitted */
+  label?: string;
+}
 
-  // Wobble accumulators
-  const wobbleTheta = useRef(0);
-  const wobblePhi = useRef(0);
+// Module-level stable identities so default-valued array props don't re-trigger
+// the effect (which would tear down listeners/observers) on every parent render.
+const EMPTY_MARKERS: GlobeMarker[] = [];
+const EMPTY_ARCS: GlobeArc[] = [];
 
-  const [frame, setFrame] = useState<FrameData | null>(null);
+/**
+ * Dotted 2D-canvas globe with markers and animated great-circle arcs.
+ * Drag (with inertia) or use the arrow keys to rotate; auto-rotation pauses
+ * while hovered or focused.
+ *
+ * Defaults are tuned for use as a decorative background:
+ *   fixed right-bottom, pointer-events-none, opacity-[0.17], 400px square stage.
+ * Pass `className="pointer-events-auto opacity-100"` (and a wrapper) to enable
+ * the interactive drag/keyboard behavior in a foreground placement.
+ */
+export function Globe({
+  markers = EMPTY_MARKERS,
+  arcs = EMPTY_ARCS,
+  center = [20, 10],
+  speed = 6,
+  samples = 12000,
+  dotColor = "var(--muted-foreground)",
+  accentColor = "var(--brand)",
+  label,
+  className,
+  ...props
+}: GlobeProps) {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const view = useRef<{ lat: number; lng: number; vx: number; vy: number }>(null);
+  const [lat0, lng0] = center;
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    const root = rootRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!root || !canvas || !ctx) return;
+    const v = (view.current ??= { lat: lat0, lng: lng0, vx: 0, vy: 0 });
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  useAnimationFrame((time) => {
-    if (!isMounted) return;
+    // Fibonacci lattice: evenly spaced samples, kept where the mask says land.
+    const dots: number[] = [];
+    for (let i = 0; i < samples; i++) {
+      const lat = Math.asin(1 - (2 * i + 1) / samples) / RAD;
+      const lng = ((i * 137.508) % 360) - 180;
+      if (isLand(lat, lng)) dots.push(...vec(lat, lng));
+    }
+    const pins = markers.map((m) => vec(m.lat, m.lng));
+    const S = 40;
+    const paths = arcs.map(({ from, to }) => {
+      const a = vec(...from);
+      const b = vec(...to);
+      const w = Math.acos(Math.min(1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]));
+      const pts: number[][] = [];
+      for (let s = 0; s <= S && w > 1e-3; s++) {
+        const t = s / S;
+        const k = (1 + Math.min(w, 1.6) * 0.12 * Math.sin(Math.PI * t)) / Math.sin(w);
+        const p = Math.sin((1 - t) * w) * k;
+        const q = Math.sin(t * w) * k;
+        pts.push([a[0] * p + b[0] * q, a[1] * p + b[1] * q, a[2] * p + b[2] * q]);
+      }
+      return pts;
+    });
 
-    const dt = lastT.current === null ? 0 : (time - lastT.current) / 1000;
-    lastT.current = time;
+    let w = 0, h = 0, R = 0, raf = 0, last = 0;
+    let inView = true, hover = false, focus = false;
+    let drag: { x: number; y: number } | null = null;
+    let dot = "", accent = "", text = "", font = "";
 
-    // Always accumulate spin (smooth) but only render at TARGET_FPS
-    spinRef.current = (spinRef.current + SPIN_SPEED * dt) % (2 * Math.PI);
-    wobbleTheta.current += WOBBLE_SPEED * 0.7 * dt;
-    wobblePhi.current += WOBBLE_SPEED * dt;
+    const resolve = () => {
+      const cs = getComputedStyle(root);
+      canvas.style.color = dotColor;
+      dot = getComputedStyle(canvas).color;
+      canvas.style.color = accentColor;
+      accent = getComputedStyle(canvas).color;
+      text = cs.color;
+      font = `500 11px ${cs.fontFamily}`;
+    };
 
-    // Throttle: skip React render if not enough time elapsed
-    if (time - lastRender.current < FRAME_MS) return;
-    lastRender.current = time;
+    const draw = (t: number) => {
+      const cl = Math.cos(v.lng * RAD), sl = Math.sin(v.lng * RAD);
+      const ct = Math.cos(v.lat * RAD), st = Math.sin(v.lat * RAD);
+      const cx = w / 2, cy = h / 2;
+      // Rotate so (v.lat, v.lng) faces the viewer; returns [x, y, depth].
+      const proj = (x: number, y: number, z: number) => {
+        const z0 = x * sl + z * cl;
+        return [x * cl - z * sl, y * ct - z0 * st, y * st + z0 * ct];
+      };
+      const disc = (x: number, y: number, r: number) => {
+        ctx.beginPath();
+        ctx.arc(cx + x * R, cy - y * R, r, 0, 7);
+      };
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = dot;
+      const r = Math.max(0.8, R / 130);
+      for (let i = 0; i < dots.length; i += 3) {
+        const [x, y, z] = proj(dots[i], dots[i + 1], dots[i + 2]);
+        if (z <= 0) continue;
+        ctx.globalAlpha = 0.12 + 0.78 * z;
+        disc(x, y, r * (0.6 + 0.4 * z));
+        ctx.fill();
+      }
 
-    const tiltX = Math.sin(wobbleTheta.current) * 0.18;
-    const tiltZ = Math.sin(wobblePhi.current) * 0.10;
+      ctx.fillStyle = ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.5;
+      ctx.lineCap = "round";
+      paths.forEach((pts, k) => {
+        const head = reduced ? 2 : ((t / 2.8 + k * 0.37) % 1.5) * 1.1;
+        const seen = pts.map((p) => {
+          const q = proj(p[0], p[1], p[2]);
+          return q[2] > 0 || q[0] * q[0] + q[1] * q[1] > 1 ? q : null;
+        });
+        for (let s = 0; s < S; s++) {
+          const a = seen[s], b = seen[s + 1];
+          if (!a || !b) continue;
+          const d = head - s / S;
+          ctx.globalAlpha = reduced ? 0.7 : d > 0 && d < 0.35 ? 1 - d / 0.35 : 0.2;
+          ctx.beginPath();
+          ctx.moveTo(cx + a[0] * R, cy - a[1] * R);
+          ctx.lineTo(cx + b[0] * R, cy - b[1] * R);
+          ctx.stroke();
+        }
+        const tip = seen[Math.round(head * S)];
+        if (tip && head <= 1) {
+          ctx.globalAlpha = 1;
+          disc(tip[0], tip[1], 2.2);
+          ctx.fill();
+        }
+        for (const e of [seen[0], seen[S]]) {
+          if (!e) continue;
+          ctx.globalAlpha = 0.9;
+          disc(e[0], e[1], 2);
+          ctx.fill();
+        }
+      });
 
-    setFrame(computeFrame(spinRef.current, tiltX, tiltZ));
-  });
+      ctx.font = font;
+      pins.forEach((p, k) => {
+        const [x, y, z] = proj(p[0], p[1], p[2]);
+        if (z <= 0) return;
+        const fade = Math.min(1, z * 4);
+        ctx.globalAlpha = fade;
+        disc(x, y, 3);
+        ctx.fill();
+        const ph = reduced ? 0.4 : (t * 0.6 + k * 0.29) % 1;
+        ctx.globalAlpha = fade * (1 - ph) * 0.7;
+        disc(x, y, 3 + ph * 11);
+        ctx.stroke();
+        const name = markers[k].label;
+        if (name && z > 0.3) {
+          ctx.globalAlpha = Math.min(1, (z - 0.3) * 4) * 0.85;
+          ctx.fillStyle = text;
+          ctx.fillText(name, cx + x * R + 8, cy - y * R + 4);
+          ctx.fillStyle = accent;
+        }
+      });
+      ctx.globalAlpha = 1;
+    };
 
-  if (!isMounted || !frame) return null;
+    const moving = () => drag || Math.abs(v.vx) + Math.abs(v.vy) > 0.01;
+    const frame = (now: number) => {
+      raf = 0;
+      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
+      if (!drag) {
+        v.lng += v.vx;
+        v.lat += v.vy;
+        v.vx *= 0.9;
+        v.vy *= 0.9;
+        if (!reduced && !hover && !focus) v.lng -= speed * dt;
+      }
+      v.lat = Math.max(-70, Math.min(70, v.lat));
+      draw(now / 1000);
+      last = now;
+      if (inView && !document.hidden && (!reduced || moving())) {
+        raf = requestAnimationFrame(frame);
+      } else last = 0;
+    };
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(frame);
+    };
 
-  const { latPaths, lonPaths, dots, northPole, southPole } = frame;
+    const resize = () => {
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      w = root.clientWidth;
+      h = root.clientHeight;
+      R = Math.min(w, h) * 0.42;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      kick();
+    };
 
-  // Axis line
-  const [nx, ny] = northPole;
-  const [sx, sy] = southPole;
-  const axDx = nx - sx, axDy = ny - sy;
-  const axLen = Math.hypot(axDx, axDy) || 1;
-  const ux = axDx / axLen, uy = axDy / axLen;
-  const EXT = 10;
+    const onDown = (e: PointerEvent) => {
+      drag = { x: e.clientX, y: e.clientY };
+      v.vx = v.vy = 0;
+      root.setPointerCapture(e.pointerId);
+      kick();
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!drag) return;
+      const k = 57 / R;
+      v.vx = -(e.clientX - drag.x) * k;
+      v.vy = (e.clientY - drag.y) * k;
+      v.lng += v.vx;
+      v.lat += v.vy;
+      drag = { x: e.clientX, y: e.clientY };
+      kick();
+    };
+    const onUp = () => {
+      drag = null;
+      kick();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] }[e.key];
+      if (!d) return;
+      e.preventDefault();
+      if (reduced) {
+        v.lng += d[0] * 15;
+        v.lat += d[1] * 15;
+      } else {
+        v.vx += d[0];
+        v.vy += d[1];
+      }
+      kick();
+    };
+    const flag = (e: Event) => {
+      if (e.type.startsWith("pointer")) hover = e.type === "pointerenter";
+      else focus = e.type === "focus";
+      kick();
+    };
+    const onTheme = () => {
+      resolve();
+      kick();
+    };
+
+    const events: [string, EventListener][] = [
+      ["pointerdown", onDown as EventListener],
+      ["pointermove", onMove as EventListener],
+      ["pointerup", onUp],
+      ["pointercancel", onUp],
+      ["keydown", onKey as EventListener],
+      ["pointerenter", flag],
+      ["pointerleave", flag],
+      ["focus", flag],
+      ["blur", flag],
+    ];
+    for (const [n, f] of events) root.addEventListener(n, f);
+    document.addEventListener("visibilitychange", kick);
+    const ro = new ResizeObserver(resize);
+    ro.observe(root);
+    const io = new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      kick();
+    });
+    io.observe(root);
+    const mo = new MutationObserver(onTheme);
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["class", "style", "data-theme"] });
+    resolve();
+
+    return () => {
+      cancelAnimationFrame(raf);
+      for (const [n, f] of events) root.removeEventListener(n, f);
+      document.removeEventListener("visibilitychange", kick);
+      ro.disconnect();
+      io.disconnect();
+      mo.disconnect();
+    };
+  }, [markers, arcs, samples, speed, dotColor, accentColor, lat0, lng0]);
+
+  const names = markers.flatMap((m) => m.label ?? []);
 
   return (
     <div
-      className="absolute -right-24 bottom-10 w-[400px] h-[400px] pointer-events-none select-none opacity-[0.17]"
-      style={{ willChange: "transform", contain: "layout style paint" }}
+      ref={rootRef}
+      role="img"
+      tabIndex={0}
+      aria-label={
+        label ??
+        `Globe${names.length ? ` marking ${names.join(", ")}` : ""}${
+          arcs.length ? `, ${arcs.length} connection${arcs.length > 1 ? "s" : ""}` : ""
+        }`
+      }
+      {...props}
+      data-slot="globe"
+      className={cn(
+        // Background defaults (see JSDoc). Fixed right-bottom, matching the previous SVG globe placement.
+        "pointer-events-none absolute -right-24 bottom-10 w-[400px] h-[400px] select-none rounded-full opacity-[0.17] outline-none",
+        // Interactive affordances — only effective when the caller opts back in
+        // with `pointer-events-auto`, and only reachable by keyboard if focusable.
+        "cursor-grab touch-pan-y active:cursor-grabbing",
+        "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        className
+      )}
     >
-      <svg
-        viewBox="0 0 200 200"
-        xmlns="http://www.w3.org/2000/svg"
-        className="w-full h-full"
-      >
-        <defs>
-          <radialGradient id="rimGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="72%" stopColor={COLOR} stopOpacity="0" />
-            <stop offset="88%" stopColor={COLOR} stopOpacity="0.18" />
-            <stop offset="100%" stopColor={COLOR} stopOpacity="0" />
-          </radialGradient>
-          <radialGradient id="sphereFill" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor={COLOR} stopOpacity="0.03" />
-            <stop offset="100%" stopColor={COLOR} stopOpacity="0" />
-          </radialGradient>
-          <clipPath id="globeClip">
-            <circle cx={CX} cy={CY} r={R} />
-          </clipPath>
-        </defs>
-
-        {/* Sphere fill */}
-        <circle cx={CX} cy={CY} r={R} fill="url(#sphereFill)" />
-
-        {/* ── Back-face grid ─────────────────────────────────────────── */}
-        <g clipPath="url(#globeClip)" opacity="0.18">
-          {latPaths.map((d, i) => (
-            <path
-              key={`lb-${i}`}
-              d={d}
-              fill="none"
-              stroke={COLOR}
-              strokeWidth={Math.abs(LAT_ANGLES[i]) < 0.01 ? "0.4" : "0.25"}
-              strokeDasharray={Math.abs(LAT_ANGLES[i]) < 0.01 ? "none" : "2 3"}
-            />
-          ))}
-          {lonPaths.map((lp, i) => (
-            <g key={`lonb-${i}`}>
-              {lp.mainBack && <path d={lp.mainBack} fill="none" stroke={COLOR} strokeWidth="0.25" strokeDasharray="2 3" />}
-              {lp.antiBack && <path d={lp.antiBack} fill="none" stroke={COLOR} strokeWidth="0.25" strokeDasharray="2 3" />}
-            </g>
-          ))}
-        </g>
-
-        {/* ── Front-face grid ────────────────────────────────────────── */}
-        <g clipPath="url(#globeClip)">
-          {latPaths.map((d, i) => {
-            const isEq = Math.abs(LAT_ANGLES[i]) < 0.01;
-            return (
-              <path
-                key={`lf-${i}`}
-                d={d}
-                fill="none"
-                stroke={COLOR}
-                strokeWidth={isEq ? "0.55" : "0.3"}
-                opacity={isEq ? 0.65 : 0.38}
-              />
-            );
-          })}
-          {lonPaths.map((lp, i) => (
-            <g key={`lonf-${i}`}>
-              {lp.mainFront && <path d={lp.mainFront} fill="none" stroke={COLOR} strokeWidth="0.3" opacity="0.38" />}
-              {lp.antiFront && <path d={lp.antiFront} fill="none" stroke={COLOR} strokeWidth="0.3" opacity="0.38" />}
-            </g>
-          ))}
-
-          {/* Graticule dots (already back-face culled) */}
-          {dots.map((dot, i) => {
-            const depth = (dot.z + 1) / 2;
-            return (
-              <circle
-                key={`d-${i}`}
-                cx={dot.x}
-                cy={dot.y}
-                r={0.4 + depth * 0.5}
-                fill={COLOR}
-                opacity={0.15 + depth * 0.55}
-              />
-            );
-          })}
-
-          {/* Poles */}
-          {northPole[2] > 0 && (
-            <circle cx={northPole[0]} cy={northPole[1]} r="1.8" fill={COLOR} opacity="0.7" />
-          )}
-          {southPole[2] > 0 && (
-            <circle cx={southPole[0]} cy={southPole[1]} r="1.8" fill={COLOR} opacity="0.5" />
-          )}
-        </g>
-
-        {/* Outer boundary */}
-        <circle cx={CX} cy={CY} r={R} fill="none" stroke={COLOR} strokeWidth="0.6" opacity="0.5" />
-
-        {/* Atmospheric rim glow */}
-        <circle cx={CX} cy={CY} r={R + 6} fill="url(#rimGlow)" />
-
-        {/* Tilted axis */}
-        <line
-          x1={sx - ux * EXT} y1={sy - uy * EXT}
-          x2={nx + ux * EXT} y2={ny + uy * EXT}
-          stroke={COLOR} strokeWidth="0.4" strokeDasharray="2.5 2.5" opacity="0.25"
-        />
-      </svg>
+      <div
+        aria-hidden
+        className="absolute inset-[8%] rounded-full bg-background bg-radial-[at_30%_25%] from-brand/12 to-transparent to-75% shadow-[0_0_70px_-12px_color-mix(in_oklab,var(--brand)_45%,transparent)] ring-1 ring-brand/15"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-[8%] rounded-full bg-radial from-transparent from-70% to-brand/20"
+      />
+      <canvas ref={canvasRef} aria-hidden className="absolute inset-0 size-full" />
     </div>
   );
-};
+}
