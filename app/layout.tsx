@@ -12,18 +12,18 @@ import AnalyticsTracker from "@/components/common/AnalyticsTracker";
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.shifaul.dev"),
   title: {
-    default: "Shifaul Islam | Software Engineer, AI & BCI",
+    default: "Shifaul Islam — Full-Stack Developer",
     template: "%s | Shifaul Islam",
   },
   description:
-    "Portfolio of Shifaul Islam, an aspiring software engineer interested in artificial intelligence and brain-computer interfaces. Explore projects, writing, and contact information.",
+    "Portfolio of Shifaul Islam, a full-stack developer building production web applications with Next.js, NestJS, and TypeScript. Explore projects, writing, and contact information.",
   openGraph: {
     type: "website",
     url: "https://www.shifaul.dev/",
     siteName: "Shifaul Islam",
-    title: "Shifaul Islam | Software Engineer, AI & BCI",
+    title: "Shifaul Islam — Full-Stack Developer",
     description:
-      "Explore software projects and technical writing by Shifaul Islam, an aspiring software engineer interested in AI and brain-computer interfaces.",
+      "Explore software projects and technical writing by Shifaul Islam, a full-stack developer working with Next.js, NestJS, and TypeScript.",
     images: [
       {
         url: "/og-cover.jpeg",
@@ -35,9 +35,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shifaul Islam | Software Engineer, AI & BCI",
+    title: "Shifaul Islam — Full-Stack Developer",
     description:
-      "Explore software projects and technical writing by Shifaul Islam, an aspiring software engineer interested in AI and brain-computer interfaces.",
+      "Explore software projects and technical writing by Shifaul Islam, a full-stack developer working with Next.js, NestJS, and TypeScript.",
     images: ["/og-cover.jpeg"],
   },
   verification: {

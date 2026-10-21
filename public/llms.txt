@@ -1,6 +1,6 @@
 # Shifaul Islam
 
-> Personal portfolio of Shifaul Islam, an aspiring software engineer interested in artificial intelligence and brain-computer interfaces.
+> Portfolio of Shifaul Islam, a full-stack developer building web applications with Next.js, NestJS, and TypeScript.
 
 The site presents Shifaul's background, selected software projects, technical writing, and contact information.
 

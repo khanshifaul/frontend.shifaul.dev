@@ -2,7 +2,7 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Shifaul Islam",
-  description: "Aspiring Software Engineer | AI & BCI Enthusiast",
+  description: "Full-Stack Developer",
   navItems: [
     {
       label: "Home",

@@ -10,7 +10,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   alternates: { canonical: "https://www.shifaul.dev/" },
   description:
-    "Welcome to the portfolio of Shifaul Islam, an aspiring software engineer passionate about AI and brain-computer interfaces. Explore projects, skills, and insights on technology and innovation.",
+    "Welcome to the portfolio of Shifaul Islam, a full-stack developer building production web applications with Next.js, NestJS, and TypeScript. Explore projects, skills, and technical writing.",
   keywords: [
     "Shifaul Islam",
     "Software Engineer",
@@ -22,18 +22,18 @@ export const metadata: Metadata = {
     "blog",
   ],
   openGraph: {
-    title: "Shifaul Islam - Aspiring Software Engineer | AI & BCI Enthusiast",
+    title: "Shifaul Islam — Full-Stack Developer",
     description:
-      "Welcome to the portfolio of Shifaul Islam, an aspiring software engineer passionate about AI and brain-computer interfaces. Explore projects, skills, and insights on technology and innovation.",
+      "Welcome to the portfolio of Shifaul Islam, a full-stack developer building production web applications with Next.js, NestJS, and TypeScript. Explore projects, skills, and technical writing.",
     url: "https://www.shifaul.dev/",
     type: "website",
     images: [{ url: "/og-cover.jpeg", width: 1680, height: 640, alt: "Md Shifaul Islam — full-stack developer portfolio cover" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shifaul Islam - Aspiring Software Engineer | AI & BCI Enthusiast",
+    title: "Shifaul Islam — Full-Stack Developer",
     description:
-      "Welcome to the portfolio of Shifaul Islam, an aspiring software engineer passionate about AI and brain-computer interfaces. Explore projects, skills, and insights on technology and innovation.",
+      "Welcome to the portfolio of Shifaul Islam, a full-stack developer building production web applications with Next.js, NestJS, and TypeScript. Explore projects, skills, and technical writing.",
     images: ["/og-cover.jpeg"],
   },
 };
@@ -44,7 +44,7 @@ const personSchema = {
   name: "Md Shifaul Islam",
   url: "https://www.shifaul.dev/",
   image: "https://www.shifaul.dev/og-cover.jpeg",
-  jobTitle: "Aspiring Software Engineer",
+  jobTitle: "Full-Stack Developer",
   description: siteConfig.description,
   email: "connect@shifaul.dev",
   knowsAbout: ["Software Engineering", "Artificial Intelligence", "Brain-Computer Interfaces"],

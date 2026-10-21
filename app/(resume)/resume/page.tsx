@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Resume",
   description:
-    "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+    "View the resume of Md Shifaul Islam, a full-stack web developer building production applications with Next.js, NestJS, and TypeScript.",
   alternates: { canonical: "https://www.shifaul.dev/resume" },
   openGraph: {
     title: "Resume — Md Shifaul Islam",
     description:
-      "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+      "View the resume of Md Shifaul Islam, a full-stack web developer building production applications with Next.js, NestJS, and TypeScript.",
     url: "https://www.shifaul.dev/resume",
     type: "profile",
     images: ["/og-cover.jpeg"],
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Resume — Md Shifaul Islam",
     description:
-      "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+      "View the resume of Md Shifaul Islam, a full-stack web developer building production applications with Next.js, NestJS, and TypeScript.",
     images: ["/og-cover.jpeg"],
   },
 };
