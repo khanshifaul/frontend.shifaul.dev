@@ -1,0 +1,19 @@
+# Shifaul Islam
+
+> Personal portfolio of Shifaul Islam, an aspiring software engineer interested in artificial intelligence and brain-computer interfaces.
+
+The site presents Shifaul's background, selected software projects, technical writing, and contact information.
+
+## Main pages
+- [Home](https://www.shifaul.dev/): Portfolio homepage.
+- [About](https://www.shifaul.dev/about): Background, skills, education, and experience.
+- [Portfolio](https://www.shifaul.dev/portfolio): Software and technology projects.
+- [Blog](https://www.shifaul.dev/blog): Articles and technical writing.
+- [Contact](https://www.shifaul.dev/contact): Contact and collaboration inquiries.
+- [Resume](https://www.shifaul.dev/resume): Publicly viewable resume.
+
+## Contact
+- Email: [connect@shifaul.dev](mailto:connect@shifaul.dev)
+- GitHub: [khanshifaul](https://github.com/khanshifaul)
+
+Only publicly available pages are intended as references. Administrative, authentication, and user-submitted content are not public reference material.

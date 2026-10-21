@@ -1,3 +1,28 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Resume",
+  description:
+    "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+  alternates: { canonical: "https://www.shifaul.dev/resume" },
+  openGraph: {
+    title: "Resume — Md Shifaul Islam",
+    description:
+      "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+    url: "https://www.shifaul.dev/resume",
+    type: "profile",
+    images: ["/og-cover.jpeg"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Resume — Md Shifaul Islam",
+    description:
+      "View the resume of Md Shifaul Islam, a full-stack web developer interested in software engineering, AI, and BCI.",
+    images: ["/og-cover.jpeg"],
+  },
+};
+
+
 export default function Resume() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center gap-2">

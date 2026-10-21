@@ -10,6 +10,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import remarkGfm from "remark-gfm";
 import { ClientMotionWrapper } from "@/components/common/ClientMotionWrapper";
 import { RadarSweep } from "@/components/common/RadarSweep";
+import { serializeJsonLd } from "@/lib/utils/json-ld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -60,6 +61,25 @@ export default async function ProjectPage({ params }: PageProps) {
     );
   }
 
+  const projectSchema = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    description: project.about,
+    url: `https://www.shifaul.dev/portfolio/${project.slug}`,
+    image: project.thumbnail
+      ? new URL(project.thumbnail, "https://www.shifaul.dev").toString()
+      : undefined,
+    dateCreated: project.createdAt.toISOString(),
+    dateModified: project.updatedAt.toISOString(),
+    creator: {
+      "@type": "Person",
+      name: "Md Shifaul Islam",
+      url: "https://www.shifaul.dev/",
+    },
+    keywords: project.technologies,
+  };
+
   // Custom components for MDX
   const components = {
     h1: (props: any) => <h1 className="text-zinc-950 dark:text-white font-black tracking-tight uppercase mt-12 mb-6" {...props} />,
@@ -102,6 +122,10 @@ export default async function ProjectPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen text-zinc-600 dark:text-zinc-400 font-mono selection:bg-green-500 selection:text-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(projectSchema) }}
+      />
       {/* Universal Terminal Backgrounds */}
       <div className="fixed inset-0 pointer-events-none">
         <Backgrounds />

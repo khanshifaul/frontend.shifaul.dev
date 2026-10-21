@@ -1,19 +1,33 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { usePathname } from "next/navigation";
+import {
+  LuArrowLeft,
+  LuArrowUpRight,
+  LuCopy,
+  LuFileText,
+  LuRotateCcw,
+} from "react-icons/lu";
+import { siteConfig } from "@/config/site.config";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+} from "@/components/ui/context-menu";
 
 /**
- * ProtectionProvider
- * Disables right-click (context menu) globally to prevent easy asset theft
- * or inspecting.
+ * Replaces the browser context menu with the site menu and blocks common
+ * developer-tools shortcuts.
  */
 export const ProtectionProvider = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
   useEffect(() => {
     const handleContextMenu = (e: MouseEvent) => {
-      // Allow right-click on inputs/textareas if needed, but for a portfolio 
-      // often the user wants it fully disabled.
       const target = e.target as HTMLElement;
-      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA") {
+      if (target.closest("input, textarea, select, [contenteditable='true']")) {
         return;
       }
       e.preventDefault();
@@ -39,5 +53,49 @@ export const ProtectionProvider = ({ children }: { children: React.ReactNode }) 
     };
   }, []);
 
-  return <>{children}</>;
+  return (
+    <ContextMenu>
+      {children}
+      <ContextMenuContent className="min-w-52">
+        <ContextMenuLabel>{siteConfig.name}</ContextMenuLabel>
+        <ContextMenuSeparator />
+        {siteConfig.navItems
+          .filter(
+            ({ href }) =>
+              pathname !== href &&
+              (href === "/" || !pathname.startsWith(`${href}/`)),
+          )
+          .map((item) => (
+            <ContextMenuItem
+              key={item.href}
+              onClick={() => window.location.assign(item.href)}
+            >
+              <LuArrowUpRight className="mr-2 h-4 w-4" aria-hidden="true" />
+              {item.label}
+            </ContextMenuItem>
+        ))}
+        {pathname !== "/resume" && (
+          <ContextMenuItem onClick={() => window.location.assign("/resume")}>
+            <LuFileText className="mr-2 h-4 w-4" aria-hidden="true" />
+            View resume
+          </ContextMenuItem>
+        )}
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => window.history.back()}>
+          <LuArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
+          Go back
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => window.location.reload()}>
+          <LuRotateCcw className="mr-2 h-4 w-4" aria-hidden="true" />
+          Reload page
+        </ContextMenuItem>
+        <ContextMenuItem
+          onClick={() => navigator.clipboard.writeText(window.location.href)}
+        >
+          <LuCopy className="mr-2 h-4 w-4" aria-hidden="true" />
+          Copy page link
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
 };

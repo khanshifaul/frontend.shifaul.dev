@@ -1,31 +1,49 @@
-// app/portfolio/[slug]/layout.tsx
 import type { Metadata } from "next";
 import { ReactNode } from "react";
+import { getPublicProjectBySlug } from "@/lib/actions/projectsApi";
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+const siteUrl = "https://www.shifaul.dev";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  const response = await getPublicProjectBySlug(slug);
+  const project = response.data.success ? response.data.data : undefined;
 
-  // Replace with your data fetching logic if available
-  const projectTitle = `Project - ${slug}`;
-  const projectDescription = `Detailed description and insights about project ${slug}.`;
+  if (!project) {
+    return {
+      title: "Project not found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const description = (project.about || project.subtitle || project.title)
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 160);
+  const url = `${siteUrl}/portfolio/${project.slug}`;
+  const image = project.thumbnail || "/og-cover.jpeg";
 
   return {
-    title: projectTitle,
-    description: projectDescription,
-    keywords: ["Portfolio", "Project", "Shifaul Islam", slug],
+    title: project.title,
+    description,
+    keywords: ["Portfolio", "Project", ...project.technologies],
+    alternates: { canonical: url },
     openGraph: {
-      title: projectTitle,
-      description: projectDescription,
-      url: `${process.env.NEXT_PUBLIC_URL}/portfolio/${slug}`,
       type: "website",
+      url,
+      title: project.title,
+      description,
+      images: [{ url: image, alt: project.title }],
     },
     twitter: {
       card: "summary_large_image",
-      title: projectTitle,
-      description: projectDescription,
+      title: project.title,
+      description,
+      images: [{ url: image, alt: project.title }],
     },
   };
 }

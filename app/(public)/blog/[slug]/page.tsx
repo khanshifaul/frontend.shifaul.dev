@@ -16,6 +16,7 @@ import { Backgrounds } from "@/components/common/Backgrounds";
 import { Globe } from "@/components/common/Globe";
 import { ClientMotionWrapper } from "@/components/common/ClientMotionWrapper";
 import { RadarSweep } from "@/components/common/RadarSweep";
+import { serializeJsonLd } from "@/lib/utils/json-ld";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -125,8 +126,34 @@ export default async function BlogArticlePage({ params }: PageProps) {
     }
   };
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: fetchedPost.title,
+    description: fetchedPost.excerpt,
+    image: fetchedPost.thumbnail
+      ? new URL(fetchedPost.thumbnail, "https://www.shifaul.dev").toString()
+      : undefined,
+    datePublished: fetchedPost.createdAt.toISOString(),
+    dateModified: fetchedPost.updatedAt.toISOString(),
+    author: {
+      "@type": "Person",
+      name: fetchedPost.authorName || "Shifaul Islam",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Md Shifaul Islam",
+      url: "https://www.shifaul.dev/",
+    },
+    mainEntityOfPage: `https://www.shifaul.dev/blog/${fetchedPost.slug}`,
+  };
+
   return (
     <div className="min-h-screen overflow-hidden text-zinc-600 dark:text-zinc-400 font-mono selection:bg-green-500 selection:text-black bg-[var(--bg-color)] transition-colors duration-500">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(articleSchema) }}
+      />
       {/* Universal Terminal Backgrounds */}
       <div className="fixed inset-0 pointer-events-none">
         <Backgrounds />

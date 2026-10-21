@@ -4,10 +4,8 @@ export default function ResumeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="print">
-      <body className="bg-white text-gray-800">
-        <main className="">{children}</main>
-      </body>
-    </html>
+    <div className="bg-white text-gray-800 print">
+      <main>{children}</main>
+    </div>
   );
 }

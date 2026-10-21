@@ -29,11 +29,19 @@ const ContextMenu = ({ children }: ContextMenuProps) => {
     const [open, setOpen] = React.useState(false)
     const [position, setPosition] = React.useState({ x: 0, y: 0 })
 
-    const handleContextMenu = React.useCallback((e: React.MouseEvent) => {
+    const handleContextMenu = React.useCallback((e: MouseEvent) => {
+        const target = e.target
+        if (target instanceof Element && target.closest("input, textarea, select, [contenteditable='true']")) return
+
         e.preventDefault()
         setPosition({ x: e.clientX, y: e.clientY })
         setOpen(true)
     }, [])
+
+    React.useEffect(() => {
+        window.addEventListener("contextmenu", handleContextMenu, true)
+        return () => window.removeEventListener("contextmenu", handleContextMenu, true)
+    }, [handleContextMenu])
 
     // Close on outside click
     React.useEffect(() => {
@@ -54,7 +62,7 @@ const ContextMenu = ({ children }: ContextMenuProps) => {
 
     return (
         <ContextMenuContext.Provider value={{ open, position, onOpenChange: setOpen }}>
-            <div onContextMenu={handleContextMenu}>
+            <div>
                 {children}
             </div>
         </ContextMenuContext.Provider>
@@ -119,7 +127,7 @@ const ContextMenuContent = React.forwardRef<HTMLDivElement, ContextMenuContentPr
             <div
                 ref={contentRef}
                 className={cn(
-                    "fixed z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+                    "fixed z-50 min-w-[8rem] overflow-hidden rounded-md border border-white bg-popover p-1 text-popover-foreground shadow-md",
                     "animate-in fade-in-0 zoom-in-95",
                     className
                 )}

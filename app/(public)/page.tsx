@@ -65,9 +65,9 @@ export default function Home() {
           <div className="space-y-6">
             <div className="flex gap-4">
               <span className="text-green-500 font-bold">$</span>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-zinc-950 dark:text-white tracking-tight">
+              <p aria-hidden="true" className="text-3xl md:text-5xl lg:text-6xl font-black text-zinc-950 dark:text-white tracking-tight">
                 <Typewriter text="whoami" />
-              </h1>
+              </p>
             </div>
 
             <motion.div
@@ -76,16 +76,13 @@ export default function Home() {
               transition={{ delay: 1 }}
               className="pl-8 space-y-4"
             >
-              <div className="text-2xl md:text-4xl font-bold leading-tight">
+              <h1 className="text-2xl md:text-4xl font-bold leading-tight">
                 <span className="text-zinc-500">{"> "}</span>
                 <span className="text-zinc-950 dark:text-white">
                   Shifaul Islam
                 </span>
                 <span className="text-green-500 animate-pulse">_</span>
-              </div>
-              <div className="text-sm md:text-base text-zinc-600 dark:text-zinc-500 font-bold uppercase tracking-widest">
-                {"[ Aspiring Software Engineer | AI & BCI Enthusiast ]"}
-              </div>
+              </h1>
             </motion.div>
 
             <motion.div

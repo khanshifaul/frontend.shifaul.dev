@@ -2,7 +2,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Portfolio - Innovative Projects by Shifaul Islam",
+  alternates: { canonical: "https://www.shifaul.dev/portfolio" },
   description:
     "Explore the portfolio of Shifaul Islam featuring projects in AI, machine learning, brain-computer interfaces, and software engineering. See how technology meets creativity.",
   keywords: [
@@ -18,14 +18,16 @@ export const metadata: Metadata = {
     title: "Portfolio - Innovative Projects by Shifaul Islam",
     description:
       "Explore the portfolio of Shifaul Islam featuring projects in AI, machine learning, brain-computer interfaces, and software engineering.",
-    url: `${process.env.NEXT_PUBLIC_API_URL}/portfolio`,
+    url: "https://www.shifaul.dev/portfolio",
     type: "website",
+    images: [{ url: "/og-cover.jpeg", width: 1680, height: 640, alt: "Md Shifaul Islam — full-stack developer portfolio cover" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Portfolio - Innovative Projects by Shifaul Islam",
     description:
       "Explore the portfolio of Shifaul Islam featuring projects in AI, machine learning, BCI, and software engineering.",
+    images: ["/og-cover.jpeg"],
   },
 };
 
